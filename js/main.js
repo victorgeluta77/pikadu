@@ -30,15 +30,17 @@ const exitElem = document.querySelector('.exit');
 const editUsername = document.querySelector('.edit-username');
 const editPhotoUrl = document.querySelector('.edit-photo');
 
+const userAvatarElem = document.querySelector('.user-avatar');
+
 
 const listUsers = [
-  {id: '01',
+  {id: 1,
   email: 'mak@mail.com',
   password: '12345',
   displayName: 'MaksJS'
   },
   {
-    id: '02',
+    id: 2,
     email: 'kate@mail.com',
     password: '123456',
     displayName: 'KateKillMaks'
@@ -62,12 +64,11 @@ const setUsers = {
     } else {
       alert (' User does not find')
     }
-    console.log(email,password);
+    // console.log(email,password);
   },
 
   // login out
   logOut(hander){
-    console.log('loginOut');
     this.user = null;
     hander();
   },
@@ -81,18 +82,29 @@ const setUsers = {
     }
 
     if(!this.getUser(email)){
-      const user ={email,password,displayName: email};
+      const user ={id:listUsers.length+1,email,password,displayName: email};
       listUsers.push(user);
       this.autorizedUser(user);
-      handler();
-      console.log(listUsers);
+      handler();   
      
     } else {
-      alert (' User was registration !');
-      console.log(listUsers);
+      alert (' User was registration !'); 
     }
     
   },
+
+// edit user
+editUser(userName,userPhoto,handler){
+  if(userName){
+    this.user.displayName = userName;
+    this.user.email = userName;
+  }
+  if(userPhoto){
+    this.user.photo = userPhoto;
+  }
+  handler();
+},
+
   // get email from user which registration
   getUser(email){
     // let user = null;
@@ -115,15 +127,18 @@ const setUsers = {
 // при початковому завантаженні - завантажується форма залогінення
 const toggleAuthDom = ()=>{
   const user = setUsers.user;
-  console.log('user',user);
+
   if (user){
     loginElem.style.display = 'none';
     userElem.style.display = '';
     userNameElem.textContent = user.displayName;
+    userAvatarElem.src = user.photo ? user.photo : userAvatarElem.src;
   } else {
     loginElem.style.display = '';
     userElem.style.display = 'none';
   }
+  // console.log('user = ',user);
+  // console.log('new list =',listUsers);
 };
 //  натискання кнопки =Input=
 loginForm.addEventListener('submit', (event)=>{
@@ -136,7 +151,6 @@ loginForm.addEventListener('submit', (event)=>{
 // натискання кнопки =Registration=
 loginSignup.addEventListener('click',event =>{
   event.preventDefault();
-   console.log('elem buttom - ',event.srcElement.innerHTML);
   setUsers.signUp(emailInput.value,passwordInput.value,toggleAuthDom);
   loginForm.reset();
 });
@@ -158,7 +172,7 @@ exitElem.addEventListener('click',event=>{
 editContainer.addEventListener('click',event=>{
   event.preventDefault();
 
-  setUsers.editUser(editUsername.value,editPhotoUrl.value);
+  setUsers.editUser(editUsername.value,editPhotoUrl.value,toggleAuthDom);
 });
 
 toggleAuthDom();
